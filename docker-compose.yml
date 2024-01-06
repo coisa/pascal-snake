@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  snake_game:
+    build: .
+    image: coisa/pascal-snake
+    stdin_open: true
+    tty: true
