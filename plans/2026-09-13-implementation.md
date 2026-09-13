@@ -51,7 +51,7 @@ Transformar o exercício Snake em uma referência educacional local, mantendo Fr
 | O Dockerfile original falha no arm64 porque SnakeGame.pas usa Crt e a imagem frolvlad/alpine-fpc fixada em sha256:91da1f657792b48b3780c1c198d7892e99d25fdb4eb42e6a4167be81ee6e3b52 não fornece a unit | build original executado pelo implementador | Tarefa 3 | docs/validation.md preserva `SnakeGame.pas(3,6) Fatal: Can't find unit crt used by SnakeGame`; build Debian confirma a unit mínima instalada. |
 | Chess não é o candidato inicial: master bec5c0cedae44637e2086ba9d6d52eb42a64b945, um arquivo de 6.516 bytes, um commit, arquivado e regras de movimento não validadas | inspeção do implementador | Excluído: outro POC independente | docs/baseline.md preserva a justificativa de seleção. |
 | Motor é determinístico, isolado de Crt e preserva regras com os novos limites de crescimento, cauda, alimento e vitória | proposta técnica desta POC | Tarefa 1 | testes unitários e de propriedades exercitam colisão, crescimento, cauda, alimento, tabuleiro cheio, direções, pausa, velocidade e determinismo. |
-| Terminal mantém interação educacional com WASD, setas, pausa, reinício, saída e renderização incremental | proposta técnica desta POC | Tarefa 2 | smoke PTY e inspeção manual documentada em docs/validation.md. |
+| Terminal mantém interação educacional com WASD, setas, pausa, reinício, saída e renderização incremental | proposta técnica desta POC | Tarefa 2 | smoke PTY e limites da inspeção visual documentados em docs/validation.md. |
 | Toolchain reproduzível, Docker proporcional e alvos build, test e game | proposta técnica desta POC | Tarefa 3 | build Docker, testes Docker e inspeção de usuário, portas e volumes. |
 | Documentação explica baseline, arquitetura, validação e diferença do exercício original | proposta técnica desta POC | Tarefa 4 | README, docs/baseline.md, docs/architecture.md e docs/validation.md revisados contra o código e os comandos executados. |
 | Não alterar o repositório remoto nem seu estado público | limite explícito do owner | Excluído: publicação e mutações remotas | status Git local e ausência de comandos remotos no registro de validação. |
@@ -85,8 +85,8 @@ Transformar o exercício Snake em uma referência educacional local, mantendo Fr
   1. Mapear as teclas para intenções de entrada sem reimplementar regras no terminal.
   2. Desenhar moldura e células alteradas, atualizando somente a região necessária em cada tick.
   3. Exibir score, recorde de sessão, velocidade e estados de derrota ou vitória.
-- `Validação`: Executar smoke de PTY sintético e fazer uma passagem manual com teclado em terminal compatível.
-- `Evidência Esperada`: O smoke encerra sem travamento e a passagem manual registra os controles e o redesenho incremental.
+- `Validação`: Executar smoke de PTY sintético com teclado, estados e resize; registrar separadamente se uma inspeção visual do aplicativo estiver disponível.
+- `Evidência Esperada`: O smoke prova estados, controles, resize e restauração do terminal; inspeção de código confirma o desenho incremental.
 - `Handoff`: A aplicação pode ser empacotada nos fluxos de build e teste.
 
 ### Tarefa 3: Configuração Da Reprodutibilidade
@@ -117,7 +117,7 @@ Transformar o exercício Snake em uma referência educacional local, mantendo Fr
 - `Execução`:
   1. Registrar o baseline do Snake e a exclusão inicial do Chess com fatos observados, sem alegar operação remota.
   2. Explicar a separação motor e terminal, invariantes, limites de capacidade, Docker e como rodar build, teste e jogo.
-  3. Registrar em docs/validation.md os comandos realmente executados, resultados, ambiente e limites da passagem manual.
+  3. Registrar em docs/validation.md os comandos realmente executados, resultados, ambiente e limites da inspeção visual.
   4. Atualizar o bloco não publicado do changelog com uma descrição factual da referência local.
 - `Validação`: Conferir que todos os comandos documentados correspondem aos alvos reais e que a matriz acima possui evidência em arquivo ou teste.
 - `Evidência Esperada`: Um leitor reproduz a compilação, os testes e a execução, entendendo o que mudou em relação ao exercício original.
@@ -143,7 +143,7 @@ Transformar o exercício Snake em uma referência educacional local, mantendo Fr
 
 - Rodar os alvos de toolchain, build e teste definidos pelo Makefile e Dockerfile.
 - Rodar a suíte Pascal e o smoke PTY sintético; se FPC estiver disponível localmente, compilar e executar a mesma suíte fora do Docker.
-- Fazer uma passagem manual no terminal com WASD, setas, pausa, reinício, saída, velocidade, pontuação, derrota e vitória quando reproduzível.
+- Provar interação por PTY e regras por testes Pascal; complementar com inspeção visual do aplicativo quando a ferramenta permitir, sem confundir essas evidências.
 - Registrar somente resultados efetivamente observados em docs/validation.md, junto do SHA local testado.
 - Verificar `git status`, diff e histórico de commits para confirmar que a entrega permanece local, temática e revisável.
 
