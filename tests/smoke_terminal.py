@@ -5,6 +5,7 @@ import fcntl
 import os
 import pty
 import select
+import signal
 import struct
 import subprocess
 import termios
@@ -27,6 +28,10 @@ class Terminal:
     def resize(self, rows, columns):
         fcntl.ioctl(self.slave, termios.TIOCSWINSZ,
                     struct.pack("HHHH", rows, columns, 0, 0))
+        # O PTY não tem grupo foreground: avisar também o transporte Docker.
+        process = getattr(self, "process", None)
+        if process is not None and process.poll() is None:
+            process.send_signal(signal.SIGWINCH)
 
     def collect(self, seconds=0.1):
         deadline = time.monotonic() + seconds

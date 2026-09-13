@@ -1,8 +1,13 @@
-version: '3'
-
 services:
   snake_game:
-    build: .
-    image: coisa/pascal-snake
+    build:
+      context: .
+      target: game
+    image: pascal-snake:local
+    pull_policy: never
     stdin_open: true
     tty: true
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
