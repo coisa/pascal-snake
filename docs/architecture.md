@@ -1,94 +1,107 @@
-# Regras e apresentação
+# Architecture and rules
 
-O programa tem três peças. `SnakeGame.pas` valida argumentos e chama a
-interface. `snake_terminal` usa teclado, relógio e Crt. `snake_engine` recebe
-intenções, transforma um record e devolve um resultado, sem I/O ou tempo.
+The application has two Pascal entry points. `SnakeGame.pas` launches the
+SDL2 desktop edition; `SnakeTerminal.pas` launches the CRT edition. Neither
+presentation layer owns collision, growth, food or victory rules.
 
 ```text
-teclado ──> RequestTurn / StartGame / TogglePause
-relógio ──> StepGame ──> TGame ──> células e placar no terminal
-                         ↑
-               testes Pascal sem terminal
+keyboard / pointer -> presentation -> engine intentions
+monotonic clock    -> presentation -> StepGame -> TGame
+                                         |
+                       Pascal rule tests + both renderers
 ```
 
-## Um passo, em ordem
+## A simulation step
 
-1. Se a partida não está em andamento, retornar sem alterar o estado.
-2. Calcular a próxima cabeça a partir da direção aceita neste tick.
-3. Verificar comida, dívida de crescimento, parede e corpo antes de mover.
-4. Se a cauda vai sair, excluí-la dos obstáculos deste passo.
-5. Crescer no máximo um segmento, deslocar o corpo e gravar a cabeça.
-6. Atualizar pontuação e crescimento; encerrar em vitória ou sortear comida
-   entre as células que agora estão livres.
+1. Ignore steps outside the running phase.
+2. Calculate the next head using the first accepted turn in this tick.
+3. In Wrap mode, map an edge crossing to the opposite edge.
+4. Check food, growth, walls and body before changing any segment.
+5. Exclude the tail from obstacles only if it will move away.
+6. Grow by at most one initialized segment, shift the body and place the head.
+7. Update score, win on a full board, or choose food from the free cells.
 
-Um movimento fatal muda a fase e preserva as posições válidas do corpo.
-O crescimento acrescenta cinco à dívida, limitada ao espaço restante.
-Cada passo consome no máximo uma unidade. Assim todo segmento novo recebe
-uma posição concreta antes de ser lido ou desenhado.
+A fatal move preserves valid body positions. Each apple adds five units of
+growth debt, capped by remaining capacity. The engine supports boards from
+6 × 2 to 40 × 20 (800 cells). Desktop uses 28 × 18; terminal uses 30 × 14.
 
-O motor aceita tabuleiros de 6 × 2 até 40 × 20, no máximo 800 segmentos.
-A interface escolhe 30 × 14 para caber em terminais comuns. O record público
-permite estudar e montar fixtures; consumidores normais devem inicializá-lo
-pela API e preservar dimensões, continuidade e unicidade do corpo.
+The public record supports readable fixtures. Normal callers initialize it
+through `InitializeGame` and preserve body continuity, uniqueness and bounds.
+The engine imports no graphics, time, audio, filesystem or networking units.
 
-## Comida e determinismo
+## Randomness and input
 
-Um bitmap temporário marca o corpo. O gerador Park–Miller, com estado de 31
-bits guardado em `TGame`, escolhe o índice de uma célula livre. Uma varredura
-finita resolve esse índice. Não há tentativa aleatória repetida até achar
-espaço, nem novo sorteio que possa prender o jogo quando resta uma única vaga.
-O produto usa `Int64`, evitando overflow mesmo com os checks habilitados.
+A temporary occupancy bitmap marks the body. A Park–Miller generator, local to
+each game, picks an index among free cells; a finite scan finds that cell.
+Even one remaining free cell terminates predictably. The multiplication uses
+`Int64`. This is a gameplay generator, not a cryptographic one.
 
-A seed é normalizada para um estado não nulo. Mesma seed e mesmas intenções
-por tick produzem o mesmo estado. Isso não promete que duas pessoas apertando
-teclas em tempos diferentes produzam a mesma partida, nem é um RNG criptográfico.
+Identical seeds and tick-level intentions produce identical game states.
+Timing of a human's key presses is not a deterministic replay contract.
+Same-direction and reverse inputs are ignored; only the first perpendicular
+turn is accepted per tick. This prevents a rapid pair of turns becoming an
+instant reversal.
 
-## Tempo e entrada
+Chill, Classic and Quick start at 180, 110 and 70 ms per step. Each apple
+subtracts 2 ms down to 45 ms.
 
-O motor aceita somente a primeira curva perpendicular válida por tick.
-Uma direção repetida ou inversão não consome esse direito; a segunda curva
-fica bloqueada até o passo. Isso impede que uma sequência rápida transforme
-duas curvas em uma reversão instantânea.
+## Desktop presentation
 
-Calmo, Normal e Turbo começam em 180, 110 e 70 ms por passo. Cada alimento
-reduz 2 ms, até 45 ms. O terminal consulta um relógio monotônico e não faz
-uma sequência de passos atrasados para compensar uma pausa da máquina.
-Redimensionar pausa a partida; uma janela pequena mostra instrução e mantém
-Q disponível. O usuário retoma explicitamente depois de ampliar a janela.
+[snake_sdl.pas](../src/snake_sdl.pas) declares the small subset of the
+[SDL2 C API](https://wiki.libsdl.org/SDL2/CategoryAPI) used by the game.
+Libraries are loaded dynamically, with a clear missing-dependency error.
+C record packing and runtime size checks cover events, vertices and audio.
+Text uses [SDL2_ttf](https://wiki.libsdl.org/SDL2_ttf/TTF_RenderUTF8_Blended)
+and a bounded 128-texture cache. Fonts come from the system or `SNAKE_FONT`.
 
-## Desenho e encerramento
+The renderer uses a 1200 × 800 logical canvas with aspect-preserving scaling,
+procedural geometry, a gradient snake, direction-aware eyes and apple icons.
+There are no downloaded art or audio assets. Sound is an enveloped sine wave
+with a quiet overtone, queued through
+[SDL_QueueAudio](https://wiki.libsdl.org/SDL2/SDL_QueueAudio). Queues are bounded;
+muting clears queued sound. Failure to open audio leaves the game playable.
 
-O frame estático contém título, placar, borda e controles. A grade usa duas
-colunas por célula para proporções mais naturais; um mapa do frame anterior
-evita redesenhar células sem mudança. Limpeza completa ocorre na mudança
-de tela ou tamanho, não em cada movimento. Painéis comunicam início, pausa,
-derrota e vitória. As etiquetas da UI usam vocabulário ASCII para não depender
-dos caracteres DOS do exercício original.
+The loop targets roughly 60 frames per second. Simulation is independent of
+drawing; a long frame is clamped and cannot trigger a catch-up burst. Rendering
+interpolates previous/current body positions, without interpolating across the
+whole board at a wrap edge. Reduced motion disables interpolation, particles,
+pulses, impact flashes and the short panel transition. Direction arrows and
+apple/head shapes provide cues in addition to color.
 
-O Crt continua cuidando de cor, coordenadas e teclado. Somente visibilidade
-do cursor usa explicitamente o modo ANSI `?25`: o
-[Crt 3.2.2 para Unix](https://github.com/fpc/FPCSource/blob/release_3_2_2/packages/rtl-console/src/unix/crt.pp)
-implementa `CursorOn/Off` com sequências do console Linux. O `finally` restaura
-cores e cursor, e a finalização do Crt restaura o modo de teclado. Os testes
-comparam os atributos do PTY antes e depois de Q, Esc e Ctrl-C.
+Focus loss pauses; returning focus never resumes automatically. Restart keeps
+the seed and selected settings. Session records are separated by world and
+pace and disappear at exit.
 
-## Compilação reproduzível
+C graphics libraries expect non-trapping IEEE floating-point arithmetic.
+The desktop boundary saves the FPC exception mask, masks floating-point traps
+while SDL is active, then restores the original mask on cleanup. This fixes an
+observed native Metal initialization failure. Pascal range, integer overflow
+and I/O checks remain enabled.
 
-O [Dockerfile](../Dockerfile) fixa o índice da imagem oficial Debian por
-digest, o snapshot APT `20260901T000000Z` e o compilador
-`fp-compiler-3.2.2=3.2.2+dfsg-20`. O pacote RTL correspondente inclui Crt.
-APT continua validando assinatura e hashes: apenas a expiração do índice
-histórico é desabilitada. O snapshot também fixa a resolução das dependências
-transitivas. Consulte o [pacote Debian](https://packages.debian.org/bookworm/fp-compiler-3.2.2)
-e a [documentação de snapshots](https://snapshot.debian.org/).
+Cleanup closes audio, textures, fonts, renderer, window and libraries, including
+partial initialization failures. `SNAKE_DEBUG=1` enables a diagnostic backtrace.
 
-O estágio `toolchain` guarda as ferramentas. `build` compila e testa as regras;
-`test` acrescenta a execução do smoke PTY. `game` recebe apenas o executável
-e roda como UID/GID 65532. O Makefile e o Compose mantêm execução sem rede,
-sem portas, sem volumes e com filesystem somente leitura para o jogo.
-Reproduzibilidade aqui significa entradas fixadas e resultados verificáveis;
-não foi afirmada identidade byte a byte entre arquiteturas ou toolchains.
+## Terminal presentation
 
-Não há backend, som dependente de hardware, arquivo de recordes, comunicação
-externa, engine gráfica ou framework de testes. Essas escolhas mantêm o
-escopo próximo do exercício que originou o repositório.
+The CRT edition uses two columns per cell, incremental drawing and ASCII
+labels. It pauses on resize and keeps quit available below its minimum size.
+Only cursor visibility uses explicit ANSI private mode 25, because
+[FPC 3.2.2 CRT](https://github.com/fpc/FPCSource/blob/release_3_2_2/packages/rtl-console/src/unix/crt.pp)
+uses Linux-console cursor sequences. PTY tests verify controls and terminal
+restoration, including Q, Esc and Ctrl-C.
+
+## Build boundary
+
+The [Dockerfile](../Dockerfile) pins the official Debian image digest, APT
+snapshot `20260901T000000Z` and `fp-compiler-3.2.2=3.2.2+dfsg-20`.
+APT signatures and package hashes remain mandatory; only historical-index
+expiry is disabled. See [Debian snapshots](https://snapshot.debian.org/).
+
+`toolchain` contains compilation/platform dependencies. `build` compiles
+both programs and runs rule tests. `test` runs rules and synthetic integration
+checks. `game` contains only the terminal binary and runs as UID/GID 65532,
+without network, volumes, extra capabilities or writable root filesystem.
+
+This is reproducibility through fixed inputs and behavioral checks, not a
+claim of byte-identical binaries across architectures. Native builds use
+installed platform libraries and are documented separately.

@@ -1,25 +1,34 @@
 # Changelog
 
-## Não publicado
+## Unreleased
 
-### Adicionado
+### Added
 
-- Motor Pascal determinístico, testes de regras e smoke de terminal com PTY.
-- Placar, recorde da sessão, três velocidades, setas, pausa, reinício e saída.
-- Vitória ao preencher o tabuleiro, ajuda de CLI e seed decimal opcional.
-- README, baseline comparativo, arquitetura, validação e plano anterior ao código.
+- Native Pascal/SDL2 desktop edition with smooth movement, procedural icons,
+  particles, apple pulses, panel transitions and synthesized audio.
+- Classic and Wrap worlds, three paces, per-world/pace session records,
+  countdown, focus-loss pause, mouse controls and fullscreen.
+- Reduced motion, mute, strict CLI seeds, snapshots and graceful error paths.
+- Pure deterministic Pascal rules and tests, full-board victory, terminal PTY
+  checks, graphical event replay and rendered-frame checks.
+- English documentation explaining the university origin, architecture and
+  reusable AI modernization challenge.
+- Reproducible Docker toolchain and CI for Linux AMD64 and ARM64.
 
-### Alterado
+### Changed
 
-- Tabuleiro de 30 × 14, células em duas colunas e painéis de estado em ASCII.
-- Desenho incremental, preservando as células que não mudaram.
-- Docker oficial Debian por digest, snapshot APT e Free Pascal 3.2.2 fixados.
-- Imagem final sem compilador, usuário não root e execução local sem rede.
+- All authored UI, comments, contracts and documentation now use English.
+- `SnakeGame.pas` launches the desktop game; `SnakeTerminal.pas` keeps a
+  standalone CRT experience with the same rule engine.
+- Desktop uses 28 × 18 cells; terminal uses 30 × 14 with incremental drawing.
+- Docker uses a pinned Debian image, APT snapshot, Free Pascal 3.2.2 and a
+  non-root, network-free terminal runtime.
 
-### Corrigido
+### Fixed
 
-- Crescimento inicializa cada segmento e respeita a capacidade do tabuleiro.
-- Comida somente em célula livre, sem loop aleatório potencialmente infinito.
-- Entrada aceita no máximo uma curva válida por tick.
-- Colisão considera se a cauda vai sair ou permanecer durante o crescimento.
-- Terminal pausa ao redimensionar e restaura cursor e teclado na saída.
+- Growth initializes each segment and respects board/array capacity.
+- Food always occupies a free cell and placement terminates on nearly full boards.
+- One valid turn per tick prevents instant reversal.
+- Collision accounts for whether the tail moves or remains during growth.
+- Resizing pauses the terminal edition; focus loss pauses the desktop edition.
+- SDL's floating-point expectations are handled explicitly on native macOS.
