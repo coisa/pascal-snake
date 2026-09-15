@@ -2,32 +2,38 @@
 
 ## Purpose
 
-Implementar o jogo em duas unidades Pascal pequenas e legíveis.
+Implement deterministic Snake rules and two Pascal presentation targets.
 
 ## Ownership
 
-O motor governa as regras; o terminal governa apresentação, teclado e relógio.
+The engine owns rules. The desktop and terminal layers own input, time and
+presentation. The SDL adapter owns C ABI declarations and platform calls.
 
 ## Local Contracts
 
-- snake_engine não importa Crt, relógio, arquivos ou rede.
-- Inicialize o estado pela API; o record público facilita o estudo e fixtures.
-- Valide colisão antes de mover. Cresça somente inicializando um segmento.
-- Comida ocupa uma célula livre; o tabuleiro cheio termina em vitória.
-- O terminal usa o motor para todas as transições e guarda o recorde da sessão.
-- Comentários em PT-BR; tipos e funções em inglês. Use arrays, records e
-  procedures sem introduzir frameworks ou hierarquias de classes.
+- `snake_engine` has no graphics, CRT, clock, filesystem or network dependency.
+- Initialize through the public API. Records also support explicit test fixtures.
+- Check collisions before mutation; initialize every new body segment.
+- Food occupies a free cell; filling the board wins. Wrap mode changes edges,
+  never self-collision rules. Randomness belongs to each game instance.
+- Use English and simple records/procedures. Keep resource lifetimes explicit.
+- Graphical effects must not influence simulation; reduced motion disables
+  interpolation, pulses and particles. Audio failure must not stop gameplay.
 
 ## Work Guidance
 
-Ao alterar regras, atualize os testes Pascal e a explicação em docs.
-Ao alterar entrada, renderização ou lifecycle, atualize o smoke PTY.
+Update Pascal tests for rule changes and synthetic integration checks for
+input, timing, rendering or lifecycle changes. Cache text with bounded ownership.
 
 ## Verification
 
-Use make test e make smoke. Compile com verificações de faixa e overflow.
+Run `make test` and `make smoke`; compile with range and overflow checks.
+Inspect a frame from the actual SDL renderer after visual changes.
 
 ## Child DOX Index
 
-- snake_engine.pas: estado e regras determinísticas.
-- snake_terminal.pas: interação Crt, desenho incremental e lifecycle.
+- `snake_engine.pas`: deterministic state and rules.
+- `snake_terminal.pas`: CRT input, incremental drawing and cleanup.
+- `snake_cli.pas`: shared strict decimal seed parsing.
+- `snake_sdl.pas`: minimal SDL2 and SDL2_ttf C ABI.
+- `snake_desktop.pas`: graphical game loop, visuals, input and audio.

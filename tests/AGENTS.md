@@ -2,29 +2,34 @@
 
 ## Purpose
 
-Provar regras e interação sem depender de uma partida humana ou de dados reais.
+Verify rules and interaction with synthetic inputs and no personal data.
 
 ## Ownership
 
-A suíte Pascal governa as regras; o smoke Python opera somente PTYs sintéticos.
+Pascal tests own rule evidence. Python helpers drive isolated PTYs and SDL
+subprocesses; application behavior remains in Pascal.
 
 ## Local Contracts
 
-Fixtures podem montar estados válidos diretamente para alcançar casos raros.
-Use seeds fixas, limites de tempo e asserts de comportamento. Não instale
-pacotes Python, escreva no HOME, monte socket Docker ou exponha portas.
+Write in English. Use fixed seeds, bounded subprocesses and behavior assertions.
+Fixtures may construct valid states to reach rare cases. Use only Python's
+standard library. Temporary output belongs below `build/`, never HOME.
+Do not mount Docker sockets or expose ports.
 
 ## Work Guidance
 
-Uma regressão deve produzir falha observável. O helper de terminal pode chamar
-o binário local ou o Docker por argumentos estruturados, sempre com cleanup.
+A regression must produce an observable failure. Exercise initialization,
+normal play, error paths and cleanup. The desktop's SDL replay runs through
+the same event handler and update loop as interactive play.
 
 ## Verification
 
-make test executa testes Pascal e PTY dentro do container. make smoke verifica
-a imagem de jogo por um PTY do host; Python é infraestrutura de teste.
+`make test` runs Pascal, PTY and graphical checks in a pinned container.
+`make smoke` tests the terminal runtime image through a host PTY.
+Inspect actual renderer output separately from programmatic image assertions.
 
 ## Child DOX Index
 
-- test_snake_engine.pas: colisão, crescimento, comida, direção e invariantes.
-- smoke_terminal.py: CLI, estados, controles, tamanho e restauração do terminal.
+- `test_snake_engine.pas`: rules, both modes and state invariants.
+- `smoke_terminal.py`: CLI, controls, resize and terminal restoration.
+- `smoke_desktop.py`: SDL replay, rendered states, CLI and failure cleanup.

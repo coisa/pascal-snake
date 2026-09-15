@@ -2,28 +2,32 @@
 
 ## Purpose
 
-Explicar a origem, as decisões técnicas e a validação do exercício.
+Explain the exercise's origin, design, reproducible use and validation.
 
 ## Ownership
 
-Documentação do projeto, subordinada ao contrato raiz e ao código testado.
+Project documentation follows the root contract and the tested source.
 
 ## Local Contracts
 
-Use PT-BR e links para fontes exatas. Distinga inspeção estática, teste
-executado, limitação e alteração deliberada de comportamento.
+Write in English. Distinguish source inspection, executed tests, limitations
+and deliberate behavior changes. Do not infer college details or AI rankings.
+The preview is generated from the actual renderer and labeled as a fixture.
 
 ## Work Guidance
 
-Atualize o documento canônico correspondente; o Git guarda revisões anteriores.
-Relatórios registram comandos, versões e resultados, sem dados de contas locais.
+Update the canonical document; Git preserves earlier versions. Evidence
+records commands, versions and outcomes without private account data.
 
 ## Verification
 
-Confira links locais e coerência dos comandos com o Makefile e o Dockerfile.
+Check local links, command consistency and the rendered preview.
+Regenerate the preview with `make preview` after material visual changes.
 
 ## Child DOX Index
 
-- [baseline.md](baseline.md): comparação dos dois exercícios e seleção.
-- [architecture.md](architecture.md): fluxo, regras e roteiro de estudo.
-- [validation.md](validation.md): comandos executados, evidências e limites.
+- [baseline.md](baseline.md): original exercise, selection and provenance.
+- [architecture.md](architecture.md): rules, platform boundary and design.
+- [validation.md](validation.md): executed checks and platform limitations.
+- [try-your-project.md](try-your-project.md): reusable prompt and evaluation.
+- `preview.png`: generated desktop screenshot for the README.
