@@ -11,6 +11,8 @@ The history of `coisa/pascal-snake` is the source of the exercise. The owner
 authorized this refactor, its GitHub issue and PR, merging the modernization,
 and publishing the baseline 0.1.0 and modernized 1.0.0 releases. Changing
 visibility and publishing container images require their own authorization.
+The owner also authorized separate PRs for docs-to-Wiki CI and Dependabot.
+Dedicated Wiki credential setup remains explicit; never repurpose a developer token.
 
 ## Local Contracts
 

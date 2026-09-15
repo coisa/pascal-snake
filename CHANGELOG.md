@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add default-branch docs-to-Wiki publication with credential-free PR validation,
+  portable links/assets, managed-file cleanup and explicit credential setup.
+- Add weekly Dependabot update PRs for GitHub Actions and Docker.
+
 ## [1.0.0] - 2026-09-15
 
 ### Added

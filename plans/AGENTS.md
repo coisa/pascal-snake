@@ -27,3 +27,4 @@ Check paths, dependencies, acceptance criteria and external-action boundaries.
 ## Child DOX Index
 
 - [2026-09-13-implementation.md](2026-09-13-implementation.md): current Snake modernization recipe.
+- [wiki-publication.md](wiki-publication.md): documentation publication and dependency updates.

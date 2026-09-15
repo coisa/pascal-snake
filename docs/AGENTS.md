@@ -31,3 +31,4 @@ Regenerate the preview with `make preview` after material visual changes.
 - [validation.md](validation.md): executed checks and platform limitations.
 - [try-your-project.md](try-your-project.md): reusable prompt and evaluation.
 - `preview.png`: generated desktop screenshot for the README.
+- [wiki-publication.md](wiki-publication.md): Wiki CI setup, ownership and recovery.
