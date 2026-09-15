@@ -1,8 +1,9 @@
 # A modern Pascal Snake
 
 Implementation recipe for [issue #1](https://github.com/coisa/pascal-snake/issues/1).
-The owner authorized the general refactor, English translation, issue and PR.
-This plan does not authorize merging or publishing container images.
+The owner authorized the general refactor, English translation, issue and PR,
+then the baseline 0.1.0 release, merge and modernized 1.0.0 release.
+Container image publication is outside this delivery.
 
 ## Outcome
 
@@ -49,9 +50,12 @@ workflow subdirectory is structural and follows that contract directly.
    the non-root, network-free terminal image and document native dependencies.
 8. Run the complete suite, inspect rendered frames, obtain independent review,
    resolve reproducible findings, commit and push only this project's changes,
-   then open a PR linked to the issue. Do not merge.
+   then open a PR linked to the issue.
 9. Run the same container checks on GitHub's standard Linux AMD64 and ARM64
    runners. Keep CI read-only, with no deployment or image publishing step.
+10. Preserve the original master commit as v0.1.0. Close the changelog, verify
+    the final PR checks and review, merge the PR and tag the resulting master
+    commit as v1.0.0. Publish English release notes and verify both tag targets.
 
 ## Acceptance matrix
 

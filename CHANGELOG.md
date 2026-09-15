@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [1.0.0] - 2026-09-15
 
 ### Added
 
@@ -32,3 +32,11 @@
 - Collision accounts for whether the tail moves or remains during growth.
 - Resizing pauses the terminal edition; focus loss pauses the desktop edition.
 - SDL's floating-point expectations are handled explicitly on native macOS.
+
+## [0.1.0] - 2026-09-15
+
+- Preserve the original university exercise at commit `15477b37f4d26bc9571228086d40884991633efb`
+  as the historical baseline before modernization.
+
+[1.0.0]: https://github.com/coisa/pascal-snake/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/coisa/pascal-snake/releases/tag/v0.1.0

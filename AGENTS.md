@@ -8,8 +8,9 @@ The application, rules and rule tests remain Pascal.
 ## Ownership
 
 The history of `coisa/pascal-snake` is the source of the exercise. The owner
-authorized this refactor, its GitHub issue and PR. Merging, changing visibility
-and publishing container images require their own authorization.
+authorized this refactor, its GitHub issue and PR, merging the modernization,
+and publishing the baseline 0.1.0 and modernized 1.0.0 releases. Changing
+visibility and publishing container images require their own authorization.
 
 ## Local Contracts
 
