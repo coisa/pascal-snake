@@ -1,0 +1,10 @@
+**
+!Dockerfile
+!Makefile
+!SnakeGame.pas
+!SnakeTerminal.pas
+!src/
+!src/*.pas
+!tests/
+!tests/*.pas
+!tests/*.py
