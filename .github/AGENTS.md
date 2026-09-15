@@ -21,6 +21,8 @@ secrets or privileged pull-request events for tests.
 
 Use the same Makefile and Docker targets as local validation. A new platform
 becomes verified only after its job succeeds, not when added to the matrix.
+Run Wiki validation on every PR: documentation can reference any repository
+file, and those targets must exist in the source commit.
 
 ## Verification
 
