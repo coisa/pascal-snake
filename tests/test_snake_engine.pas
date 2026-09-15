@@ -28,7 +28,7 @@ end;
 procedure Valid(const G: TGame);
 var
   Used: array[1..MaxWidth, 1..MaxHeight] of Boolean;
-  I: Integer;
+  I, DX, DY: Integer;
 begin
   FillChar(Used, SizeOf(Used), 0);
   Check((G.Length >= InitialLength) and
@@ -42,8 +42,16 @@ begin
     Check(not Used[G.Body[I].X, G.Body[I].Y], 'distinct body cells');
     Used[G.Body[I].X, G.Body[I].Y] := True;
     if I > 1 then
-      Check(Abs(G.Body[I].X - G.Body[I - 1].X) +
-        Abs(G.Body[I].Y - G.Body[I - 1].Y) = 1, 'contiguous body');
+    begin
+      DX := Abs(G.Body[I].X - G.Body[I - 1].X);
+      DY := Abs(G.Body[I].Y - G.Body[I - 1].Y);
+      if G.Mode = gmWrap then
+      begin
+        if DX = G.Width - 1 then DX := 1;
+        if DY = G.Height - 1 then DY := 1;
+      end;
+      Check(DX + DY = 1, 'contiguous body');
+    end;
   end;
   if G.HasFood then
   begin
@@ -55,9 +63,9 @@ begin
     Check((G.Length = G.Width * G.Height) and not G.HasFood, 'full board wins');
 end;
 
-function NewGame(Seed: LongWord = 42): TGame;
+function NewGame(Seed: LongWord = 42; Mode: TGameMode = gmClassic): TGame;
 begin
-  Check(InitializeGame(Result, 30, 14, Seed, dfClassic), 'init');
+  Check(InitializeGame(Result, 30, 14, Seed, dfClassic, Mode), 'init');
   StartGame(Result);
 end;
 
@@ -203,7 +211,7 @@ begin
   Check(InitializeGame(G, Width, Height, 42, dfClassic), 'near-full init');
   StartGame(G);
   I := 0;
-  { Caminho contínuo que deixa somente (1,1) livre; altura deve ser par. }
+  { Continuous path leaving only (1,1) free; height must be even. }
   for Y := 1 to Height do
     if Odd(Y) then
       for X := 2 to Width do
@@ -282,11 +290,13 @@ var
   Seed, Tick: Integer;
   Direction: TDirection;
   A, B: TStepResult;
+  Mode: TGameMode;
 begin
   for Seed := 0 to 255 do
   begin
-    G := NewGame(Seed);
-    Twin := NewGame(Seed);
+    Mode := TGameMode(Seed mod 2);
+    G := NewGame(Seed, Mode);
+    Twin := NewGame(Seed, Mode);
     for Tick := 1 to 200 do
     begin
       Direction := TDirection((Tick * 17 + Seed * 13 + Tick div 7) mod 4);
@@ -304,12 +314,47 @@ begin
       Valid(G);
       if G.Phase = phLost then
       begin
-        G := NewGame(Seed + Tick);
-        Twin := NewGame(Seed + Tick);
+        G := NewGame(Seed + Tick, Mode);
+        Twin := NewGame(Seed + Tick, Mode);
       end;
     end;
   end;
-  Passed('51200 deterministic paired steps and state invariants');
+  Passed('51200 deterministic paired steps across both modes and state invariants');
+end;
+
+procedure TestWrap;
+var G: TGame; D: TDirection; I: Integer; Target: TPoint;
+begin
+  for D := Low(TDirection) to High(TDirection) do
+  begin
+    G := NewGame(42, gmWrap); G.Direction := D;
+    for I := 1 to G.Length do
+      case D of
+        dirUp: G.Body[I] := Point(3, I);
+        dirRight: G.Body[I] := Point(G.Width - I + 1, 3);
+        dirDown: G.Body[I] := Point(3, G.Height - I + 1);
+        dirLeft: G.Body[I] := Point(I, 3);
+      end;
+    case D of
+      dirUp: Target := Point(3, G.Height);
+      dirRight: Target := Point(1, 3);
+      dirDown: Target := Point(3, 1);
+      dirLeft: Target := Point(G.Width, 3);
+    end;
+    G.Food := Target;
+    Check(StepGame(G) = srAte, 'wrap eats across each edge');
+    Check(SamePoint(G.Body[1], Target), 'wrap reaches opposite edge');
+    Valid(G);
+  end;
+  G := NewGame(42, gmWrap); G.Length := 6;
+  G.Body[1] := Point(G.Width, 3); G.Body[2] := Point(G.Width, 4);
+  G.Body[3] := Point(1, 4); G.Body[4] := Point(2, 4);
+  G.Body[5] := Point(2, 3); G.Body[6] := Point(1, 3);
+  G.Food := Point(1, 1); Valid(G);
+  Check(StepGame(G) = srMoved, 'wrap into vacating tail'); Valid(G);
+  G.Direction := dirDown;
+  Check(StepGame(G) = srLost, 'wrap still collides with body');
+  Passed('wrap edges, food, moving tail and self-collision');
 end;
 
 begin
@@ -319,6 +364,7 @@ begin
   TestCollisions;
   TestCapacity;
   TestPhasesAndSpeed;
+  TestWrap;
   TestDeterminismAndProperties;
   WriteLn('PASS: ', Cases, ' groups, ', Checks, ' checks');
 end.

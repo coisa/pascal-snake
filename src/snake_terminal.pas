@@ -48,9 +48,9 @@ var
   function SpeedName: String;
   begin
     case Game.Difficulty of
-      dfCalm: Result := 'CALMO';
-      dfClassic: Result := 'NORMAL';
-      dfFast: Result := 'TURBO';
+      dfCalm: Result := 'CHILL';
+      dfClassic: Result := 'CLASSIC';
+      dfFast: Result := 'QUICK';
     end;
   end;
 
@@ -83,7 +83,7 @@ var
       TextBackground(Black);
       ClrScr;
       Center(Top, 'P A S C A L  /  S N A K E', LightGreen);
-      Center(Top + 1, 'FEITO EM PASCAL. JOGADO NO TERMINAL.', DarkGray);
+      Center(Top + 1, 'BUILT IN PASCAL. PLAYED IN YOUR TERMINAL.', DarkGray);
       Put(Left, Top + 4, '+' + StringOfChar('-', FrameWidth - 2) + '+', DarkGray);
       Put(Left, Top + 19, '+' + StringOfChar('-', FrameWidth - 2) + '+', DarkGray);
       for Y := 1 to BoardHeight do
@@ -91,11 +91,11 @@ var
         Put(Left, Top + 4 + Y, '|', DarkGray);
         Put(Left + FrameWidth - 1, Top + 4 + Y, '|', DarkGray);
       end;
-      Center(Top + 21, 'WASD / SETAS  MOVER   P  PAUSA   R  REINICIAR   Q  SAIR', LightGray);
+      Center(Top + 21, 'WASD / ARROWS  MOVE   P  PAUSE   R  RESTART   Q  QUIT', LightGray);
     end;
     Put(Left, Top + 3, StringOfChar(' ', FrameWidth), LightGray);
-    Put(Left + 1, Top + 3, Format('PONTOS %4d', [Game.Score]), White);
-    Put(Left + 22, Top + 3, Format('RECORDE %4d', [Best]), LightGreen);
+    Put(Left + 1, Top + 3, Format('POINTS %4d', [Game.Score]), White);
+    Put(Left + 22, Top + 3, Format('BEST %4d', [Best]), LightGreen);
     Put(Left + 47, Top + 3, SpeedName, LightCyan);
     FillChar(Cells, SizeOf(Cells), 0);
     for I := 1 to Game.Length do
@@ -113,14 +113,14 @@ var
           end;
     PreviousCells := Cells;
     case Game.Phase of
-      phReady: Panel('PRONTO PARA JOGAR?', '1 CALMO   2 NORMAL   3 TURBO',
-        'ENTER / SPACE  JOGAR', LightGreen);
-      phPaused: Panel('PAUSADO', 'RESPIRE. O JOGO ESPERA.',
-        'P / SPACE  CONTINUAR', Yellow);
-      phLost: Panel('FIM DE JOGO', Format('TOTAL: %d PONTOS', [Game.Score]),
-        'R  NOVA PARTIDA    Q  SAIR', LightRed);
-      phWon: Panel('TABULEIRO COMPLETO!', Format('TOTAL: %d PONTOS', [Game.Score]),
-        'R  NOVA PARTIDA    Q  SAIR', LightGreen);
+      phReady: Panel('READY TO PLAY?', '1 CHILL   2 CLASSIC   3 QUICK',
+        'ENTER / SPACE  PLAY', LightGreen);
+      phPaused: Panel('PAUSED', 'TAKE A BREATH. THE GAME CAN WAIT.',
+        'P / SPACE  RESUME', Yellow);
+      phLost: Panel('GAME OVER', Format('TOTAL: %d POINTS', [Game.Score]),
+        'R  NEW GAME    Q  QUIT', LightRed);
+      phWon: Panel('BOARD COMPLETE!', Format('TOTAL: %d POINTS', [Game.Score]),
+        'R  NEW GAME    Q  QUIT', LightGreen);
     end;
     FullRedraw := False;
     Dirty := False;
@@ -140,7 +140,7 @@ var
       Columns := ScreenWidth;
       Rows := ScreenHeight;
     end;
-    { Crt usa coordenadas limitadas; manter uma janela válida mesmo em PTY vazio. }
+    { CRT coordinates are bounded; keep a valid window even in an empty PTY. }
     if Columns < 1 then Columns := 1;
     if Rows < 1 then Rows := 1;
     if Columns > 255 then Columns := 255;
@@ -199,12 +199,12 @@ begin
   Result := 2;
   if (IsATTY(StdInputHandle) <> 1) or (IsATTY(StdOutputHandle) <> 1) then
   begin
-    WriteLn(StdErr, 'Use um terminal interativo: make play (Docker com -it).');
+    WriteLn(StdErr, 'Use an interactive terminal: make play (Docker with -it).');
     Exit;
   end;
   if GetEnvironmentVariable('TERM') = 'dumb' then
   begin
-    WriteLn(StdErr, 'Este jogo precisa de um terminal ANSI, como xterm.');
+    WriteLn(StdErr, 'This game requires an ANSI terminal such as xterm.');
     Exit;
   end;
   InitializeGame(Game, BoardWidth, BoardHeight, Seed, dfClassic);
@@ -218,7 +218,7 @@ begin
   LastTick := GetTickCount64;
   SavedTextAttr := TextAttr;
   CheckBreak := False;
-  { CursorOn/Off do Crt usa o console Linux; DEC private mode 25 serve ao xterm. }
+  { CRT CursorOn/Off targets the Linux console; DEC private mode 25 targets xterm. }
   Write(StdOut, #27'[?25l');
   Flush(StdOut);
   try
@@ -241,7 +241,7 @@ begin
         begin
           TextBackground(Black);
           ClrScr;
-          Put(1, 1, Copy('Aumente o terminal para 70x24. Q sai.', 1, Columns - 1), Yellow);
+          Put(1, 1, Copy('Resize the terminal to 70x24. Q quits.', 1, Columns - 1), Yellow);
           Dirty := False;
         end;
         if KeyPressed then HandleKey;
@@ -277,7 +277,7 @@ begin
     Write(StdOut, #27'[?25h');
     Flush(StdOut);
     GotoXY(1, 1);
-    WriteLn('JOGO ENCERRADO.');
+    WriteLn('GAME CLOSED.');
   end;
 end;
 

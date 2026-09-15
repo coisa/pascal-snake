@@ -1,4 +1,4 @@
-"""Smoke do binário Pascal em PTYs sintéticos; somente biblioteca padrão."""
+"""Exercise the Pascal binary through synthetic PTYs; standard library only."""
 
 import argparse
 import fcntl
@@ -8,6 +8,7 @@ import select
 import signal
 import struct
 import subprocess
+import sys
 import termios
 import time
 import uuid
@@ -28,7 +29,7 @@ class Terminal:
     def resize(self, rows, columns):
         fcntl.ioctl(self.slave, termios.TIOCSWINSZ,
                     struct.pack("HHHH", rows, columns, 0, 0))
-        # O PTY não tem grupo foreground: avisar também o transporte Docker.
+        # This PTY has no foreground process group: notify the Docker transport too.
         process = getattr(self, "process", None)
         if process is not None and process.poll() is None:
             process.send_signal(signal.SIGWINCH)
@@ -57,11 +58,18 @@ class Terminal:
 
     def finish(self, key=b"q"):
         start = self.send(key)
-        self.expect(b"JOGO ENCERRADO.", start)
+        self.expect(b"GAME CLOSED.", start)
         assert self.process.wait(timeout=5) == 0, "game exit status"
         self.collect()
         assert b"\x1b[?25h" in self.data[start:], f"cursor not restored: {self.data[start:]!r}"
-        assert termios.tcgetattr(self.slave) == self.original_mode, "TTY mode not restored"
+        restored = termios.tcgetattr(self.slave)
+        expected = self.original_mode.copy()
+        if sys.platform == "darwin":
+            # macOS sets PENDIN when canonical mode returns, even with an exact
+            # tcsetattr restore. It is kernel retype bookkeeping, not a user mode.
+            expected[3] &= ~termios.PENDIN
+            restored[3] &= ~termios.PENDIN
+        assert restored == expected, f"TTY mode not restored: {expected!r} -> {restored!r}"
 
     def close(self):
         if self.process.poll() is None:
@@ -77,7 +85,7 @@ class Terminal:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("executable", nargs="?", default="./build/SnakeGame")
+    parser.add_argument("executable", nargs="?", default="./build/SnakeTerminal")
     parser.add_argument("--docker", metavar="IMAGE")
     args = parser.parse_args()
     name = "pascal-snake-smoke-" + uuid.uuid4().hex
@@ -102,59 +110,59 @@ def main():
                       ["--seed", " 1"], ["--seed", "1", "extra"]):
         result = cli(arguments)
         assert result.returncode == 2, f"accepted invalid arguments: {arguments}"
-        assert b"terminal interativo" not in result.stderr, "invalid input reached game"
+        assert b"interactive terminal" not in result.stderr, "invalid input reached game"
     for seed in ("0", "42", "4294967295"):
         result = cli(["--seed", seed])
-        assert result.returncode == 2 and b"terminal interativo" in result.stderr
+        assert result.returncode == 2 and b"interactive terminal" in result.stderr
     print("ok - help, decimal seeds, invalid arguments and non-TTY rejection")
 
     terminals = []
     try:
         game = Terminal(command(["--seed", "42"], True))
         terminals.append(game)
-        game.expect(b"PRONTO PARA JOGAR?")
-        game.expect(b"PONTOS")
-        game.expect(b"RECORDE")
-        # Selecionar a velocidade, iniciar, pausar e provar que nada avança.
+        game.expect(b"READY TO PLAY?")
+        game.expect(b"POINTS")
+        game.expect(b"BEST")
+        # Choose speed, start, pause and verify that nothing advances.
         mark = game.send(b"1")
-        game.expect(b"CALMO", mark)
+        game.expect(b"CHILL", mark)
         game.send(b"\r")
         game.collect(0.25)
         mark = game.send(b"p")
-        game.expect(b"PAUSADO", mark)
+        game.expect(b"PAUSED", mark)
         game.collect(0.1)
         paused_output = len(game.data)
         game.collect(0.45)
         assert len(game.data) == paused_output, "paused game still redraws or advances"
-        # Setas reais passam pelo parser de teclado do Crt.
+        # Real arrow sequences pass through the CRT keyboard parser.
         game.send(b" ")
         game.collect(0.08)
         game.send(b"\x1b[A")
         game.collect(0.25)
         assert game.process.poll() is None, "arrow incorrectly interpreted as quit"
         mark = game.send(b"p")
-        game.expect(b"PAUSADO", mark)
+        game.expect(b"PAUSED", mark)
         mark = game.send(b"r")
-        game.expect(b"PRONTO PARA JOGAR?", mark)
+        game.expect(b"READY TO PLAY?", mark)
         game.send(b"\r")
         game.collect(0.2)
-        # Redimensionar uma partida pausa o jogo; a tela pequena não o avança.
+        # Resizing pauses gameplay; an undersized screen never advances it.
         game.resize(16, 50)
         game.expect(b"70x24")
         mark = len(game.data)
         game.resize(24, 80)
-        game.expect(b"PAUSADO", mark)
+        game.expect(b"PAUSED", mark)
         game.send(b" ")
         mark = len(game.data)
-        game.expect(b"FIM DE JOGO", mark, timeout=5)
+        game.expect(b"GAME OVER", mark, timeout=5)
         mark = game.send(b"r")
-        game.expect(b"PRONTO PARA JOGAR?", mark)
+        game.expect(b"READY TO PLAY?", mark)
         game.finish()
         game.close()
         terminals.remove(game)
         print("ok - speed, play, pause, arrows, restart, resize, loss and clean quit")
 
-        # Q funciona mesmo quando o terminal começa menor que o tabuleiro.
+        # Q works even when the terminal starts smaller than the board.
         small = Terminal(command(["--seed", "0"], True), rows=12, columns=40)
         terminals.append(small)
         small.expect(b"70x24")
@@ -166,7 +174,7 @@ def main():
         for key in (b"\x1b", b"\x03"):
             game = Terminal(command(["--seed", "4294967295"], True))
             terminals.append(game)
-            game.expect(b"PRONTO PARA JOGAR?")
+            game.expect(b"READY TO PLAY?")
             game.finish(key)
             game.close()
             terminals.remove(game)
@@ -175,7 +183,7 @@ def main():
         for terminal in terminals:
             terminal.close()
         if args.docker:
-            # Somente o container nomeado por esta execução pode ser removido.
+            # Only the container named by this run may be removed.
             subprocess.run(["docker", "rm", "-f", name],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                            timeout=10)

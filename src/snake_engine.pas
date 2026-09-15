@@ -20,6 +20,7 @@ type
   TDirection = (dirUp, dirRight, dirDown, dirLeft);
   TPhase = (phReady, phRunning, phPaused, phLost, phWon);
   TDifficulty = (dfCalm, dfClassic, dfFast);
+  TGameMode = (gmClassic, gmWrap);
   TStepResult = (srIdle, srMoved, srAte, srLost, srWon);
   TGame = record
     Width, Height, Length, GrowthPending, Score: Integer;
@@ -29,6 +30,7 @@ type
     Direction, NextDirection: TDirection;
     Phase: TPhase;
     Difficulty: TDifficulty;
+    Mode: TGameMode;
     RandomState: LongWord;
   end;
 
@@ -36,7 +38,7 @@ function Point(X, Y: Integer): TPoint;
 function SamePoint(const A, B: TPoint): Boolean;
 function SnakeAt(const Game: TGame; X, Y: Integer): Boolean;
 function InitializeGame(var Game: TGame; Width, Height: Integer;
-  Seed: LongWord; Difficulty: TDifficulty): Boolean;
+  Seed: LongWord; Difficulty: TDifficulty; Mode: TGameMode = gmClassic): Boolean;
 procedure StartGame(var Game: TGame);
 procedure TogglePause(var Game: TGame);
 function RequestTurn(var Game: TGame; Direction: TDirection): Boolean;
@@ -76,10 +78,10 @@ begin
   FillChar(Occupied, SizeOf(Occupied), 0);
   for I := 1 to Game.Length do
     Occupied[Game.Body[I].X, Game.Body[I].Y] := True;
-  { Park-Miller: estado local; Int64 evita overflow na multiplicação. }
+  { Park-Miller: local state; Int64 prevents multiplication overflow. }
   Game.RandomState := (Int64(Game.RandomState) * 48271) mod 2147483647;
   Choice := Game.RandomState mod LongWord(FreeCells);
-  { Selecionar a enésima célula livre sempre termina, mesmo com uma única vaga. }
+  { Selecting the nth free cell terminates even when only one cell is free. }
   for Y := 1 to Game.Height do
     for X := 1 to Game.Width do
       if not Occupied[X, Y] then
@@ -94,7 +96,7 @@ begin
 end;
 
 function InitializeGame(var Game: TGame; Width, Height: Integer;
-  Seed: LongWord; Difficulty: TDifficulty): Boolean;
+  Seed: LongWord; Difficulty: TDifficulty; Mode: TGameMode): Boolean;
 var
   I, HeadX: Integer;
 begin
@@ -109,6 +111,7 @@ begin
   Game.NextDirection := dirRight;
   Game.Phase := phReady;
   Game.Difficulty := Difficulty;
+  Game.Mode := Mode;
   Game.RandomState := (Seed mod 2147483646) + 1;
   HeadX := (Width + InitialLength) div 2;
   for I := 1 to Game.Length do
@@ -159,6 +162,11 @@ begin
     dirDown: Inc(Head.Y);
     dirLeft: Dec(Head.X);
   end;
+  if Game.Mode = gmWrap then
+  begin
+    Head.X := (Head.X + Game.Width - 1) mod Game.Width + 1;
+    Head.Y := (Head.Y + Game.Height - 1) mod Game.Height + 1;
+  end;
   Eating := Game.HasFood and SamePoint(Head, Game.Food);
   Capacity := Game.Width * Game.Height;
   Growth := Game.GrowthPending;
@@ -166,7 +174,7 @@ begin
   if Growth > Capacity - Game.Length then Growth := Capacity - Game.Length;
   Growing := Growth > 0;
 
-  { A cauda deixa de ser obstáculo no mesmo passo em que ela sai. }
+  { The tail is no longer an obstacle on the step when it moves away. }
   LastObstacle := Game.Length;
   if not Growing then Dec(LastObstacle);
   Result := srLost;

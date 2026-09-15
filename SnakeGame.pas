@@ -2,48 +2,60 @@ program SnakeGame;
 
 {$mode objfpc}{$H+}
 
-uses
-  SysUtils, snake_terminal;
+uses SysUtils, snake_cli, snake_desktop;
 
-function ParseSeed(const Text: String; out Seed: LongWord): Boolean;
-var
-  I: Integer;
-  Value: QWord;
+procedure Usage;
 begin
-  Result := False;
-  if Text = '' then Exit;
-  for I := 1 to Length(Text) do
-    if not (Text[I] in ['0'..'9']) then Exit;
-  if not TryStrToQWord(Text, Value) then Exit;
-  if Value > High(LongWord) then Exit;
-  Seed := Value;
-  Result := True;
+  WriteLn('Snake. / The Pascal Edition');
+  WriteLn('Usage: SnakeGame [--seed NUMBER] [--no-audio] [--reduced-motion]');
+  WriteLn('       SnakeGame --self-test');
+  WriteLn('       SnakeGame --snapshot FILE.bmp [--scene menu|play|pause|over|win]');
+  WriteLn('WASD/arrows move; Enter starts; Space/P pauses; R restarts; Esc opens menu.');
+  WriteLn('Tab selects world; 1/2/3 select pace; M mutes; V reduces motion; F11 fullscreen; Q quits.');
 end;
 
-var
-  Seed: LongWord;
-
+var Options: TDesktopOptions; I: Integer; Argument: String; HasScene: Boolean;
 begin
-  Seed := GetTickCount64 mod High(LongWord);
-  if (ParamCount = 1) and (ParamStr(1) = '--help') then
-  begin
-    WriteLn(StdOut, 'Pascal Snake | SnakeGame [--seed 0..4294967295]');
-    WriteLn(StdOut, 'WASD/setas: mover | P/Space: pausa | R: reiniciar | Q/Esc: sair');
-    WriteLn(StdOut, 'Terminal ANSI 70x24. ENTER inicia; 1/2/3 escolhem a velocidade.');
-    Halt(0);
-  end;
-  if ParamCount <> 0 then
-  begin
-    if (ParamCount <> 2) or (ParamStr(1) <> '--seed') then
+  Options := Default(TDesktopOptions);
+  Options.Seed := GetTickCount64 mod High(LongWord);
+  Options.Scene := 'menu'; I := 1; HasScene := False;
+  try
+    while I <= ParamCount do
     begin
-      WriteLn(StdErr, 'Uso: SnakeGame [--seed 0..4294967295] | --help');
-      Halt(2);
+      Argument := ParamStr(I);
+      case Argument of
+        '--help': begin Usage; Halt(0); end;
+        '--no-audio': Options.NoAudio := True;
+        '--reduced-motion': Options.ReducedMotion := True;
+        '--self-test': Options.SelfTest := True;
+        '--seed', '--snapshot', '--scene':
+          begin
+            Inc(I);
+            if I > ParamCount then raise Exception.Create('Missing value for ' + Argument);
+            case Argument of
+              '--seed': if not ParseSeed(ParamStr(I), Options.Seed) then
+                raise Exception.Create('Invalid seed: use a decimal integer from 0 to 4294967295.');
+              '--snapshot':
+                begin
+                  Options.Snapshot := ParamStr(I);
+                  if Options.Snapshot = '' then raise Exception.Create('Snapshot path cannot be empty.');
+                end;
+              '--scene': begin Options.Scene := ParamStr(I); HasScene := True; end;
+            end;
+          end;
+      else raise Exception.Create('Unknown option: ' + Argument);
+      end;
+      Inc(I);
     end;
-    if not ParseSeed(ParamStr(2), Seed) then
-    begin
-      WriteLn(StdErr, 'Seed fora do formato: use um inteiro de 0 a 4294967295.');
-      Halt(2);
-    end;
+    if (Options.Scene <> 'menu') and (Options.Scene <> 'play') and
+       (Options.Scene <> 'pause') and (Options.Scene <> 'over') and
+       (Options.Scene <> 'win') then raise Exception.Create('Unknown snapshot scene.');
+    if Options.SelfTest and ((Options.Snapshot <> '') or Options.NoAudio or Options.ReducedMotion) then
+      raise Exception.Create('--self-test cannot be combined with snapshot, audio or motion options.');
+    if (Options.Snapshot = '') and HasScene then
+      raise Exception.Create('--scene requires --snapshot.');
+  except
+    on E: Exception do begin WriteLn(StdErr, E.Message); Halt(2); end;
   end;
-  Halt(RunTerminal(Seed));
+  Halt(RunDesktop(Options));
 end.
