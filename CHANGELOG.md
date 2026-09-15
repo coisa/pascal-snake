@@ -4,7 +4,8 @@
 
 - Add default-branch docs-to-Wiki publication with credential-free PR validation,
   portable links/assets, managed-file cleanup and explicit credential setup.
-- Add weekly Dependabot update PRs for GitHub Actions and Docker.
+- Add weekly Dependabot update PRs for GitHub Actions, Docker and the
+  hash-pinned CommonMark parser used by the Wiki renderer.
 
 ## [1.0.0] - 2026-09-15
 

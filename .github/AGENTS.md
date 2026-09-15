@@ -32,4 +32,5 @@ Check YAML structure and the actual run result at the PR commit.
 - `workflows/wiki.yml`: credential-free PR preview and default-branch Wiki sync.
 - [wiki_sync.md](wiki_sync.md): renderer inputs, outputs, failures and verification.
 - `test_wiki_sync.py`: isolated rendering and managed-file boundary tests.
-- `dependabot.yml`: weekly Actions and Docker update PRs, without auto-merge.
+- `requirements.txt`: hash-pinned Markdown parser installed in `build/wiki-venv`.
+- `dependabot.yml`: weekly Actions, Docker and Python update PRs, without auto-merge.
