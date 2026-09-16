@@ -2,12 +2,14 @@
 
 ## Purpose
 
-Run reproducible validation for pull requests and the main branch.
+Run reproducible validation and publish documentation from the default branch.
 
 ## Ownership
 
 The repository root owns release and publication authority. CI supplies test
-evidence and cannot merge, deploy or publish artifacts to a registry.
+evidence and cannot merge or publish artifacts to a registry. The owner also
+authorized docs-to-Wiki automation; it uses a dedicated configured secret only
+on default-branch publication runs.
 
 ## Local Contracts
 
@@ -19,6 +21,8 @@ secrets or privileged pull-request events for tests.
 
 Use the same Makefile and Docker targets as local validation. A new platform
 becomes verified only after its job succeeds, not when added to the matrix.
+Run Wiki validation on every PR: documentation can reference any repository
+file, and those targets must exist in the source commit.
 
 ## Verification
 
@@ -27,3 +31,8 @@ Check YAML structure and the actual run result at the PR commit.
 ## Child DOX Index
 
 - `workflows/ci.yml`: Linux AMD64/ARM64 build, rule, SDL and terminal checks.
+- `workflows/wiki.yml`: credential-free PR preview and default-branch Wiki sync.
+- [wiki_sync.md](wiki_sync.md): renderer inputs, outputs, failures and verification.
+- `test_wiki_sync.py`: isolated rendering and managed-file boundary tests.
+- `requirements.txt`: hash-pinned Markdown parser installed in `build/wiki-venv`.
+- `dependabot.yml`: weekly Actions, Docker and Python update PRs, without auto-merge.
