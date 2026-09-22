@@ -2,37 +2,30 @@
 
 ## Purpose
 
-Run reproducible validation and publish documentation from the default branch.
+Validate the game and synchronize documentation to the GitHub Wiki.
 
 ## Ownership
 
-The repository root owns release and publication authority. CI supplies test
-evidence and cannot merge or publish artifacts to a registry. The owner also
-authorized docs-to-Wiki automation; it uses a dedicated configured secret only
-on default-branch publication runs.
+The root contract owns merge and publication. The owner authorized the
+docs-to-Wiki workflow; publication runs only from the default branch.
 
 ## Local Contracts
 
-Write in English. Pin external actions by commit. Grant read-only repository
-permissions, use standard public runners and bound job time. Never require
-secrets or privileged pull-request events for tests.
+Write in English. Pin external actions by SHA and bound job time.
+Game tests use read-only permissions. Wiki synchronization uses the built-in
+`GITHUB_TOKEN` with `contents: write`; pull requests do not publish.
 
 ## Work Guidance
 
-Use the same Makefile and Docker targets as local validation. A new platform
-becomes verified only after its job succeeds, not when added to the matrix.
-Run Wiki validation on every PR: documentation can reference any repository
-file, and those targets must exist in the source commit.
+Use the game Makefile targets locally and in CI. Keep Wiki synchronization
+in one workflow: clone, mirror `docs/`, commit changes and push.
 
 ## Verification
 
-Check YAML structure and the actual run result at the PR commit.
+Check workflow syntax and actual Actions results before claiming publication.
 
 ## Child DOX Index
 
-- `workflows/ci.yml`: Linux AMD64/ARM64 build, rule, SDL and terminal checks.
-- `workflows/wiki.yml`: credential-free PR preview and default-branch Wiki sync.
-- [wiki_sync.md](wiki_sync.md): renderer inputs, outputs, failures and verification.
-- `test_wiki_sync.py`: isolated rendering and managed-file boundary tests.
-- `requirements.txt`: hash-pinned Markdown parser installed in `build/wiki-venv`.
-- `dependabot.yml`: weekly Actions, Docker and Python update PRs, without auto-merge.
+- `workflows/ci.yml`: Linux AMD64/ARM64 game validation.
+- `workflows/wiki-sync.yml`: default-branch documentation mirror.
+- `dependabot.yml`: weekly Actions and Docker update PRs; no automatic merge.

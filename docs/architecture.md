@@ -47,7 +47,7 @@ subtracts 2 ms down to 45 ms.
 
 ## Desktop presentation
 
-[snake_sdl.pas](../src/snake_sdl.pas) declares the small subset of the
+[snake_sdl.pas](https://github.com/coisa/pascal-snake/blob/master/src/snake_sdl.pas) declares the small subset of the
 [SDL2 C API](https://wiki.libsdl.org/SDL2/CategoryAPI) used by the game.
 Libraries are loaded dynamically, with a clear missing-dependency error.
 C record packing and runtime size checks cover events, vertices and audio.
@@ -92,7 +92,7 @@ restoration, including Q, Esc and Ctrl-C.
 
 ## Build boundary
 
-The [Dockerfile](../Dockerfile) pins the official Debian image digest, APT
+The [Dockerfile](https://github.com/coisa/pascal-snake/blob/master/Dockerfile) pins the official Debian image digest, APT
 snapshot `20260901T000000Z` and `fp-compiler-3.2.2=3.2.2+dfsg-20`.
 APT signatures and package hashes remain mandatory; only historical-index
 expiry is disabled. See [Debian snapshots](https://snapshot.debian.org/).

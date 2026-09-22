@@ -26,9 +26,10 @@ Regenerate the preview with `make preview` after material visual changes.
 
 ## Child DOX Index
 
-- [baseline.md](baseline.md): original exercise, selection and provenance.
-- [architecture.md](architecture.md): rules, platform boundary and design.
-- [validation.md](validation.md): executed checks and platform limitations.
-- [try-your-project.md](try-your-project.md): reusable prompt and evaluation.
+- [baseline.md](https://github.com/coisa/pascal-snake/blob/master/docs/baseline.md): original exercise, selection and provenance.
+- [architecture.md](https://github.com/coisa/pascal-snake/blob/master/docs/architecture.md): rules, platform boundary and design.
+- [validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/validation.md): executed checks and platform limitations.
+- [try-your-project.md](https://github.com/coisa/pascal-snake/blob/master/docs/try-your-project.md): reusable prompt and evaluation.
 - `preview.png`: generated desktop screenshot for the README.
-- [wiki-publication.md](wiki-publication.md): Wiki CI setup, ownership and recovery.
+- [Home.md](https://github.com/coisa/pascal-snake/blob/master/docs/Home.md): source-controlled Wiki landing page.
+- [wiki-publication.md](https://github.com/coisa/pascal-snake/blob/master/docs/wiki-publication.md): simple Wiki synchronization and verification.
