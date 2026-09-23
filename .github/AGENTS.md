@@ -2,28 +2,30 @@
 
 ## Purpose
 
-Run reproducible validation for pull requests and the main branch.
+Validate the game and synchronize documentation to the GitHub Wiki.
 
 ## Ownership
 
-The repository root owns release and publication authority. CI supplies test
-evidence and cannot merge, deploy or publish artifacts to a registry.
+The root contract owns merge and publication. The owner authorized the
+docs-to-Wiki workflow; publication runs only from the default branch.
 
 ## Local Contracts
 
-Write in English. Pin external actions by commit. Grant read-only repository
-permissions, use standard public runners and bound job time. Never require
-secrets or privileged pull-request events for tests.
+Write in English. Pin external actions by SHA and bound job time.
+Game tests use read-only permissions. Wiki synchronization uses the built-in
+`GITHUB_TOKEN` with `contents: write`; pull requests do not publish.
 
 ## Work Guidance
 
-Use the same Makefile and Docker targets as local validation. A new platform
-becomes verified only after its job succeeds, not when added to the matrix.
+Use the game Makefile targets locally and in CI. Keep Wiki synchronization
+in one workflow: clone, mirror `docs/`, commit changes and push.
 
 ## Verification
 
-Check YAML structure and the actual run result at the PR commit.
+Check workflow syntax and actual Actions results before claiming publication.
 
 ## Child DOX Index
 
-- `workflows/ci.yml`: Linux AMD64/ARM64 build, rule, SDL and terminal checks.
+- `workflows/ci.yml`: Linux AMD64/ARM64 game validation.
+- `workflows/wiki-sync.yml`: default-branch documentation mirror.
+- `dependabot.yml`: weekly Actions and Docker update PRs; no automatic merge.

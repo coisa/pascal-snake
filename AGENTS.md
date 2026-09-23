@@ -11,6 +11,8 @@ The history of `coisa/pascal-snake` is the source of the exercise. The owner
 authorized this refactor, its GitHub issue and PR, merging the modernization,
 and publishing the baseline 0.1.0 and modernized 1.0.0 releases. Changing
 visibility and publishing container images require their own authorization.
+The owner also authorized separate PRs for docs-to-Wiki CI and Dependabot.
+Wiki synchronization uses the built-in Actions token on default-branch runs.
 
 ## Local Contracts
 
@@ -44,6 +46,6 @@ before describing the implementation as reviewed.
 - [src/AGENTS.md](src/AGENTS.md): rules, platform adapter and presentation.
 - [tests/AGENTS.md](tests/AGENTS.md): deterministic, SDL and PTY checks.
 - [docs/AGENTS.md](docs/AGENTS.md): origin, architecture and evidence.
-- [.github/AGENTS.md](.github/AGENTS.md): automated validation on Linux runners.
+- [.github/AGENTS.md](.github/AGENTS.md): Linux game validation and Wiki synchronization.
 - [README.md](README.md): build, play, controls and the experiment.
 - [CHANGELOG.md](CHANGELOG.md): observable project changes.
