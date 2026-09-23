@@ -10,7 +10,7 @@ a lightweight terminal edition. The point is to explore what today's tools can
 do with an old idea—not to claim a benchmark win or pretend the result needed
 no follow-up, testing or review.
 
-![The Pascal desktop game](docs/preview.png)
+![The Pascal desktop game](docs/Preview.png)
 
 *An actual SDL renderer capture of a staged gameplay fixture. All game code,
 including the interface and sound synthesis, is Pascal.*
@@ -111,23 +111,23 @@ seeded determinism, controls, focus loss, rendering and resource cleanup.
 Python is test infrastructure, not part of gameplay.
 
 Linux ARM64 and native macOS ARM64 have been exercised locally. The CI matrix
-also targets Linux AMD64. See [validation](docs/validation.md) for the exact
+also targets Linux AMD64. See [validation](docs/Validation.md) for the exact
 evidence and remaining platform limits. Windows is not currently supported by
 the supplied Unix terminal target and library loader.
 
 ## Try this with your own college project
 
-Copy the [reusable modernization prompt](docs/try-your-project.md), attach or
+Copy the [reusable modernization prompt](docs/Try%20your%20Project.md), attach or
 point your AI at your project, and keep the original language constraint.
 Judge the result by running it, inspecting the implementation and checking
 what was actually tested—not by the confidence of the answer.
 
 ## Explore the implementation
 
-- [The original exercise and its limitations](docs/baseline.md)
-- [Architecture, rules and SDL integration](docs/architecture.md)
+- [The original exercise and its limitations](docs/Baseline.md)
+- [Architecture, rules and SDL integration](docs/Architecture.md)
 - [Implementation recipe](plans/2026-09-13-implementation.md)
-- [Validation evidence](docs/validation.md)
+- [Validation evidence](docs/Validation.md)
 - [Changelog](CHANGELOG.md)
 
 Start with [snake_engine.pas](src/snake_engine.pas), then its

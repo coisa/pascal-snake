@@ -46,7 +46,7 @@ Static inspection found concrete limitations:
 - The Docker compiler image had no pinned version or digest.
 
 These are code observations. Executed compilation results are recorded in
-[validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/validation.md).
+[Validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/Validation.md).
 
 ## Deliberate changes
 

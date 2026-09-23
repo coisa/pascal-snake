@@ -49,4 +49,4 @@ local-smoke: local-build
 preview: | build
 	$(DOCKER) build --target build -t pascal-snake-build:local .
 	$(DOCKER) run --rm --network none -e SDL_VIDEODRIVER=dummy --mount "type=bind,src=$(CURDIR)/build,target=/captures" pascal-snake-build:local ./build/SnakeGame --snapshot /captures/play.bmp --scene play --seed 42 --no-audio
-	magick build/play.bmp -strip docs/preview.png
+	magick build/play.bmp -strip docs/Preview.png

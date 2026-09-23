@@ -13,6 +13,7 @@ Project documentation follows the root contract and the tested source.
 Write in English. Distinguish source inspection, executed tests, limitations
 and deliberate behavior changes. Do not infer college details or AI rankings.
 The preview is generated from the actual renderer and labeled as a fixture.
+Name Wiki pages with a leading capital and readable words; encode spaces in URLs.
 
 ## Work Guidance
 
@@ -26,10 +27,10 @@ Regenerate the preview with `make preview` after material visual changes.
 
 ## Child DOX Index
 
-- [baseline.md](https://github.com/coisa/pascal-snake/blob/master/docs/baseline.md): original exercise, selection and provenance.
-- [architecture.md](https://github.com/coisa/pascal-snake/blob/master/docs/architecture.md): rules, platform boundary and design.
-- [validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/validation.md): executed checks and platform limitations.
-- [try-your-project.md](https://github.com/coisa/pascal-snake/blob/master/docs/try-your-project.md): reusable prompt and evaluation.
-- `preview.png`: generated desktop screenshot for the README.
+- [Baseline.md](https://github.com/coisa/pascal-snake/blob/master/docs/Baseline.md): original exercise, selection and provenance.
+- [Architecture.md](https://github.com/coisa/pascal-snake/blob/master/docs/Architecture.md): rules, platform boundary and design.
+- [Validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/Validation.md): executed checks and platform limitations.
+- [Try your Project.md](https://github.com/coisa/pascal-snake/blob/master/docs/Try%20your%20Project.md): reusable prompt and evaluation.
+- `Preview.png`: generated desktop screenshot for the README.
 - [Home.md](https://github.com/coisa/pascal-snake/blob/master/docs/Home.md): source-controlled Wiki landing page.
-- [wiki-publication.md](https://github.com/coisa/pascal-snake/blob/master/docs/wiki-publication.md): simple Wiki synchronization and verification.
+- [Wiki Publication.md](https://github.com/coisa/pascal-snake/blob/master/docs/Wiki%20Publication.md): simple Wiki synchronization and verification.
