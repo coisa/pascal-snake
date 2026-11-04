@@ -27,10 +27,10 @@ Regenerate the preview with `make preview` after material visual changes.
 
 ## Child DOX Index
 
-- [Baseline.md](https://github.com/coisa/pascal-snake/blob/master/docs/Baseline.md): original exercise, selection and provenance.
-- [Architecture.md](https://github.com/coisa/pascal-snake/blob/master/docs/Architecture.md): rules, platform boundary and design.
-- [Validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/Validation.md): executed checks and platform limitations.
-- [Try your Project.md](https://github.com/coisa/pascal-snake/blob/master/docs/Try%20your%20Project.md): reusable prompt and evaluation.
+- [Baseline.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Baseline.md): original exercise, selection and provenance.
+- [Architecture.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Architecture.md): rules, platform boundary and design.
+- [Validation.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Validation.md): executed checks and platform limitations.
+- [Try your Project.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Try%20your%20Project.md): reusable prompt and evaluation.
 - `Preview.png`: generated desktop screenshot for the README.
-- [Home.md](https://github.com/coisa/pascal-snake/blob/master/docs/Home.md): source-controlled Wiki landing page.
-- [Wiki Publication.md](https://github.com/coisa/pascal-snake/blob/master/docs/Wiki%20Publication.md): simple Wiki synchronization and verification.
+- [Home.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Home.md): source-controlled Wiki landing page.
+- [Wiki Publication.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Wiki%20Publication.md): simple Wiki synchronization and verification.

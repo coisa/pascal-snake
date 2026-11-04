@@ -9,7 +9,7 @@ and the GitHub API. Their Pascal files were read in full.
 
 | Evidence | Snake | Chess |
 |---|---|---|
-| Repository | [coisa/pascal-snake](https://github.com/coisa/pascal-snake) | [coisa/pascal-chess](https://github.com/coisa/pascal-chess) |
+| Repository | [coisa/pascal-snake](https://github.com/artificenerd/pascal-snake) | [coisa/pascal-chess](https://github.com/artificenerd/pascal-chess) |
 | Base commit | `15477b37f4d26bc9571228086d40884991633efb` | `bec5c0cedae44637e2086ba9d6d52eb42a64b945` |
 | Commit date | 2024-01-06 | 2017-12-01 |
 | Tracked files | 3 | 1 |
@@ -29,7 +29,7 @@ Building a chess rules engine would have changed the size of the experiment.
 
 ## What the original teaches
 
-The [original SnakeGame.pas](https://github.com/coisa/pascal-snake/blob/15477b37f4d26bc9571228086d40884991633efb/SnakeGame.pas)
+The [original SnakeGame.pas](https://github.com/artificenerd/pascal-snake/blob/15477b37f4d26bc9571228086d40884991633efb/SnakeGame.pas)
 uses records, an array of segments, procedures, conditions and a timed CRT
 loop. It begins with five segments, uses WASD, grows by five per apple,
 accelerates and ends on collision. Those fundamentals remain recognizable.
@@ -46,7 +46,7 @@ Static inspection found concrete limitations:
 - The Docker compiler image had no pinned version or digest.
 
 These are code observations. Executed compilation results are recorded in
-[Validation.md](https://github.com/coisa/pascal-snake/blob/master/docs/Validation.md).
+[Validation.md](https://github.com/artificenerd/pascal-snake/blob/master/docs/Validation.md).
 
 ## Deliberate changes
 

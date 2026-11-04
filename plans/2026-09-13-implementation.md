@@ -1,6 +1,6 @@
 # A modern Pascal Snake
 
-Implementation recipe for [issue #1](https://github.com/coisa/pascal-snake/issues/1).
+Implementation recipe for [issue #1](https://github.com/artificenerd/pascal-snake/issues/1).
 The owner authorized the general refactor, English translation, issue and PR,
 then the baseline 0.1.0 release, merge and modernized 1.0.0 release.
 Container image publication is outside this delivery.

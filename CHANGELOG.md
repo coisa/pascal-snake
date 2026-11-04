@@ -45,5 +45,5 @@
 - Preserve the original university exercise at commit `15477b37f4d26bc9571228086d40884991633efb`
   as the historical baseline before modernization.
 
-[1.0.0]: https://github.com/coisa/pascal-snake/compare/v0.1.0...v1.0.0
-[0.1.0]: https://github.com/coisa/pascal-snake/releases/tag/v0.1.0
+[1.0.0]: https://github.com/artificenerd/pascal-snake/compare/v0.1.0...v1.0.0
+[0.1.0]: https://github.com/artificenerd/pascal-snake/releases/tag/v0.1.0

@@ -111,6 +111,6 @@ gameplay safety. Chess was read but not compiled or changed.
 - Deterministic tests and independent review are not a security certification.
   No external agentic security scanner was run.
 
-The owner authorized [issue #1](https://github.com/coisa/pascal-snake/issues/1)
+The owner authorized [issue #1](https://github.com/artificenerd/pascal-snake/issues/1)
 and a PR. Snake was already unarchived. Merge and release publication remain
 separate actions.

@@ -1,6 +1,6 @@
 # Documentation publication and dependency updates
 
-Tracks [issue #3](https://github.com/coisa/pascal-snake/issues/3).
+Tracks [issue #3](https://github.com/artificenerd/pascal-snake/issues/3).
 
 1. Use one workflow to copy `docs/` into the initialized GitHub Wiki after
    documentation changes reach the default branch, or on manual dispatch.
