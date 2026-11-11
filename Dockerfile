@@ -1,5 +1,5 @@
 # Debian official multi-architecture index, captured 2026-09-13.
-FROM debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251 AS toolchain
+FROM debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc AS toolchain
 
 # Snapshot fixes transitive packages too. APT signatures remain mandatory;
 # only expiry is disabled for the immutable historical package index.
@@ -23,7 +23,7 @@ RUN make local-build local-test
 FROM build AS test
 CMD ["make", "local-test", "local-smoke"]
 
-FROM debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251 AS game
+FROM debian:bookworm-slim@sha256:734a72b3d6142a71993b4bc580ca01d8ca687f77a2c422d96a961d3376b179bc AS game
 COPY --from=build /work/build/SnakeTerminal /usr/local/bin/SnakeTerminal
 USER 65532:65532
 ENV LANG=C.UTF-8 TERM=xterm-256color
